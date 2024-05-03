@@ -7,7 +7,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
         head = new Node(null);
         tail = new Node(null);
         head.next = new AtomicMarkableReference<>(tail, false);
-        tail.next = null;
+        tail.next = new AtomicMarkableReference<>(null, false);
     }
 
     @Override
@@ -19,7 +19,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
             LockFrame frame = find(value);
             Node pred = frame.pred;
             Node curr = frame.curr;
-            if (value.equals(curr.item)) {
+            if (curr.item != null && curr.item.equals(value)) {
                 return false;
             } else {
                 Node node = new Node(value);
@@ -41,7 +41,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
             LockFrame frame = find(value);
             Node pred = frame.pred;
             Node curr = frame.curr;
-            if (!value.equals(curr.item)) {
+            if (curr.item == null || !curr.item.equals(value)) {
                 return false;
             } else {
                 Node succ = curr.next.getReference();
@@ -58,7 +58,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
     public boolean contains(T value) {
         boolean[] marked = {false};
         Node curr = head;
-        while (curr.next != null) {
+        while (curr.next.getReference() != null) {
             if (value.equals(curr.item) && !marked[0])
                 return true;
 
@@ -74,9 +74,6 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
 
 
     private LockFrame find(T value) {
-        if (isEmpty())
-            return new LockFrame(head, tail);
-
         Node pred, curr, succ;
         boolean[] marked = {false};
         boolean snip;
@@ -94,8 +91,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
                     succ = curr.next.get(marked);
                 }
 
-                assert curr.item != null;
-                if (value.compareTo(curr.item) >= 0)
+                if (curr.item == null || curr.item.compareTo(value) >= 0)
                     return new LockFrame(pred, curr);
                 pred = curr;
                 curr = succ;

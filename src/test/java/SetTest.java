@@ -31,6 +31,34 @@ public class SetTest {
     }
 
     @Test
+    public void contains2() {
+        SetImpl<Integer> set = new SetImpl<>();
+
+        Thread th1 = new Thread(() -> {
+            for (int i = 0; i < 100; i = i+2) {
+                set.add(i);
+            }
+        });
+
+        Thread th2 = new Thread(() -> {
+            for (int i = 1; i < 100; i = i+2) {
+                set.add(i);
+            }
+        });
+
+        th1.start();
+        th2.start();
+        try {
+            th1.join();
+            th2.join();
+        } catch (Exception ignore) {}
+
+        for (int i = 0; i < 100; i++) {
+            assertTrue(set.contains(i));
+        }
+    }
+
+    @Test
     public void isEmpty() {
         SetImpl<Integer> set = new SetImpl<>();
         assertTrue(set.isEmpty());
