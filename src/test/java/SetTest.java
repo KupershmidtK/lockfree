@@ -66,4 +66,38 @@ public class SetTest {
         set.add(1);
         assertFalse(set.isEmpty());
     }
+
+    @Test
+    public void isEmpty2() {
+        SetImpl<Integer> set = new SetImpl<>();
+
+        Thread th1 = new Thread(() -> {
+            for (int i = 0; i < 100; i++) {
+                set.add(i);
+            }
+        });
+
+        Thread th2 = new Thread(() -> {
+            for (int i = 0; i < 60; i++) {
+                set.remove(i);
+            }
+        });
+
+        Thread th3 = new Thread(() -> {
+            for (int i = 40; i < 100; i++) {
+                set.remove(i);
+            }
+        });
+
+        th1.start();
+        th2.start();
+        th3.start();
+        try {
+            th1.join();
+            th2.join();
+            th3.join();
+        } catch (Exception ignore) {}
+
+        assertFalse(set.isEmpty());
+    }
 }
