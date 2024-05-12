@@ -18,18 +18,18 @@ public class LincheckTest {
     }
 
     @Operation
-    public void add(@Param(name = "value") Integer val) {
-        set.add(val);
+    public void add(@Param(name = "value") Integer value) {
+        set.add(value);
     }
 
     @Operation
-    public void remove(@Param(name = "value") Integer val) {
-        set.remove(val);
+    public void remove(@Param(name = "value") Integer value) {
+        set.remove(value);
     }
 
     @Operation
-    public void contains(@Param(name = "value") Integer val) {
-        set.contains(val);
+    public void contains(@Param(name = "value") Integer value) {
+        set.contains(value);
     }
 
     @Test
