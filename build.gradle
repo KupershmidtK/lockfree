@@ -13,4 +13,5 @@ repositories {
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:lincheck:2.32")
 }

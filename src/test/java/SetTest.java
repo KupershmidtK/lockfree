@@ -141,5 +141,46 @@ public class SetTest {
 
         assertTrue(set.isEmpty());
     }
+
+/*    @Test
+    public void WrongTest() {
+        SetImpl<Integer> set = new SetImpl<>();
+
+        Thread t1 = new Thread(() -> {
+            assertFalse(set.remove(3));
+            assertTrue(set.isEmpty());
+            assertTrue(set.isEmpty());
+            assertTrue(set.add(2));
+            assertTrue(set.contains(2));
+            assertFalse(set.add(2));
+            assertFalse(set.add(1));
+            assertFalse(set.contains(3));
+            assertTrue(set.contains(1));
+            assertFalse(set.remove(2));
+        });
+
+        Thread t2 = new Thread(() -> {
+            assertFalse(set.contains(2));
+            assertTrue(set.isEmpty());
+            assertTrue(set.add(1));
+            assertTrue(set.contains(2));
+            assertTrue(set.contains(1));
+            assertFalse(set.isEmpty());
+            assertFalse(set.isEmpty());
+            assertTrue(set.remove(1));
+            assertFalse(set.isEmpty());
+            assertFalse(set.remove(2));
+        });
+
+        t1.start();
+        t2.start();
+
+        try {
+            t1.join();
+            t2.join();
+        } catch (Exception ignore) {}
+    }
+
+ */
 }
 
