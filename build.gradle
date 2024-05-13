@@ -1,17 +1,27 @@
 plugins {
     id 'java'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group 'LockFreeSet'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation("junit:junit:4.13.2")
+//    testImplementation("junit:junit:4.13.2")
+    testImplementation('org.junit.jupiter:junit-jupiter:5.11.0-M1')
     testImplementation("org.jetbrains.kotlinx:lincheck:2.32")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+kotlin {
+    jvmToolchain(17)
 }

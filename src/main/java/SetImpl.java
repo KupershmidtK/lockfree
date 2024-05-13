@@ -15,26 +15,10 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
         if (value == null)
             throw new IllegalArgumentException();
 
-        Node pred, curr;
         while (true) {
-            // LockFrame frame = find(value);
-            // Node pred = frame.pred;
-            // Node curr = frame.curr;
-            retry: while (true) {
-                pred = head;
-                curr = pred.next.getReference();
-                while (true) {
-                    if (curr.item == null) break retry;
-                    if (curr.next.isMarked() && !pred.next.compareAndSet(curr, curr.next.getReference(), false, false))
-                        break;
-                    if (curr.item.compareTo(value) >= 0) break retry;
-
-                    pred = curr;
-                    curr = curr.next.getReference();
-                }
-                // if (curr.item == null) break;
-                // if (curr.item.compareTo(value) >= 0) break;
-            }
+            LockFrame frame = find(value);
+            Node pred = frame.pred;
+            Node curr = frame.curr;
 
             if (curr.item != null && curr.item.equals(value)) {
                 return false;
@@ -53,27 +37,10 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
         if (value == null)
             throw new IllegalArgumentException();
 
-        Node pred, curr;
         while (true) {
-            // LockFrame frame = find(value);
-            // Node pred = frame.pred;
-            // Node curr = frame.curr;
-
-            retry: while (true) {
-                pred = head;
-                curr = pred.next.getReference();
-                while (true) {
-                    if (curr.item == null) break retry;
-                    if (curr.next.isMarked() && !pred.next.compareAndSet(curr, curr.next.getReference(), false, false))
-                        break;
-                    if (curr.item.compareTo(value) >= 0) break retry;
-
-                    pred = curr;
-                    curr = curr.next.getReference();
-                }
-                // if (curr.item == null) break;
-                // if (curr.item.compareTo(value) >= 0) break;
-            }
+            LockFrame frame = find(value);
+            Node pred = frame.pred;
+            Node curr = frame.curr;
 
             if (curr.item == null || !curr.item.equals(value)) {
                 return false;
@@ -84,7 +51,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
                 continue;
 
             pred.next.compareAndSet(curr, succ, false, false);
-            return true;
+                return true;
         }
     }
 
@@ -99,20 +66,26 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
 
     @Override
     public boolean isEmpty() {
-        while(true) {
-            Node current = head.next.getReference();
-            if (current.item == null) return true;
+        Node pred, curr, succ;
+        boolean[] marked = {false};
+        retry: while (true) {
+            pred = head;
+            curr = pred.next.getReference();
+            while (true) {
+                succ = curr.next.get(marked);
+                while (marked[0]) {
+                    if (!pred.next.compareAndSet(curr, succ, false, false))
+                        continue retry;
+                    curr = succ;
+                    succ = curr.next.get(marked);
+                }
 
-            Node succ = current.next.getReference();
-            if(current.next.isMarked()) {
-                head.next.compareAndSet(current, succ, false, false);
-            } else {
-                return false;
+                return curr.item == null;
             }
         }
     }
 
-/*
+
     private LockFrame find(T value) {
         Node pred, curr, succ;
         boolean[] marked = {false};
@@ -136,7 +109,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
             }
         }
     }
-*/
+
     private class Node {
         final T item;
         AtomicMarkableReference<Node> next;
@@ -145,7 +118,7 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
             this.item = item;
         }
     }
-/*
+
     private class LockFrame {
         public Node pred, curr;
 
@@ -154,5 +127,4 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
             this.curr = curr;
         }
     }
-*/
 }
