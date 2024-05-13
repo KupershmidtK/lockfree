@@ -22,12 +22,12 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
 
             if (curr.item != null && curr.item.equals(value)) {
                 return false;
-            } else {
-                Node node = new Node(value);
-                node.next = new AtomicMarkableReference<>(curr, false);
-                if (pred.next.compareAndSet(curr, node, false, false)) {
-                    return true;
-                }
+            }
+
+            Node node = new Node(value);
+            node.next = new AtomicMarkableReference<>(curr, false);
+            if (pred.next.compareAndSet(curr, node, false, false)) {
+                return true;
             }
         }
     }

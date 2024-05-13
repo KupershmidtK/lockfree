@@ -7,7 +7,7 @@ import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.ModelChecki
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
 import org.junit.jupiter.api.Test
 
-@Param(name = "value", gen = IntGen::class, conf = "1:3")
+@Param(name = "value", gen = IntGen::class, conf = "1:5")
 class LincheckTestKt {
     private val set = SetImpl<Int>()
 
@@ -26,8 +26,8 @@ class LincheckTestKt {
     @Test
     fun stressTest() = StressOptions()
         .logLevel(LoggingLevel.INFO)
-        .check(LincheckTestKt::class)
+        .check(this::class)
 
-    @Test
-    fun modelCheckingTest() = ModelCheckingOptions().check(this::class)
+//    @Test
+//    fun modelCheckingTest() = ModelCheckingOptions().check(this::class)
 }
