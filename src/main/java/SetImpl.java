@@ -66,8 +66,24 @@ public class SetImpl<T extends Comparable<T>> implements Set<T> {
 
     @Override
     public boolean isEmpty() {
-        LockFrame frame = find(null);
-        return frame.curr.item == null;
+        Node pred, curr, succ;
+        boolean[] marked = {false};
+
+        retry: while (true) {
+            pred = head;
+            curr = pred.next.getReference();
+            while (true) {
+                succ = curr.next.get(marked);
+                while (marked[0]) {
+                    if (!pred.next.compareAndSet(curr, succ, false, false))
+                        continue retry;
+                    curr = succ;
+                    succ = curr.next.get(marked);
+                }
+
+                return curr.item == null;
+            }
+        }
     }
 
 
